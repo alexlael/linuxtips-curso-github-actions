@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu:latest
     steps:
       - name: Confere versão do ubuntu
-      run: cat /etc/os-release
+        run: cat /etc/os-release
 
       - name: Exibir mensagem
-      run: echo "Estou exibindo uma mensagem aleatória para entender como funciona o workflow usando github Actions"
+        run: echo "Estou exibindo uma mensagem aleatória para entender como funciona o workflow usando github Actions"
