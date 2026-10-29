@@ -13,4 +13,10 @@ jobs:
         run: cat /etc/os-release
 
       - name: Exibir mensagem
-        run: echo "Estou exibindo uma mensagem aleatória para entender como funciona o workflow usando github Actions"
+        run: echo "Estou exibindo uma mensagem aleatória para entender como funciona o workflow usando github Actions" > mensagem.txt
+
+      - name: Outro passo
+        run: ls -lha
+
+      - name: Lê o conteúdo do arquivo
+        run: cat mensagem.txt  
