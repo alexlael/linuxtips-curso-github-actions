@@ -1,0 +1,28 @@
+name: Arquivos compartilhados entre jobs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  job_1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confere versão do ubuntu
+        run: cat /etc/os-release
+
+      - name: Exibir mensagem
+        run: echo "Estou exibindo uma mensagem aleatória para entender como funciona o workflow usando github Actions" > mensagem.txt
+
+      - name: Lê o conteúdo do arquivo
+        run: cat mensagem.txt  
+
+  job_2: 
+    runs-on: ubuntu-latest
+    steps:
+    - name: Acessa arquivo da mensagem
+      run: ls -lha
+
+    - name: Acessa arquivo da mensagem
+      run: cat mensagem.txt
