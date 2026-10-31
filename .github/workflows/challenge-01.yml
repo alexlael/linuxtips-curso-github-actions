@@ -1,0 +1,27 @@
+name: Challenge 01
+
+on:
+  workflow_dispatch:
+    inputs:
+      docker_image:
+        description: "Nome e tag da imagem Docker (ex: ubuntu:latest)"
+        required: true
+        default: "alpine:latest"
+        type: string
+
+jobs:
+  challenge_01:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixa a imagem Docker
+        env:
+          DOCKER_IMAGE: ${{ inputs.docker_image }}
+        run: docker pull "$DOCKER_IMAGE"
+
+      - name: Exibe a lista de imagens Docker baixadas
+        run: docker images
+      
+      - name: Analisa vulnerabilidades com Docker Scout
+        env:
+            DOCKER_IMAGE: ${{ inputs.docker_image }}
+        run: docker scout cves "$DOCKER_IMAGE"  
