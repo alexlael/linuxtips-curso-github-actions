@@ -2,6 +2,7 @@
 # Terraform - Laboratório de CODEOWNERS
 # Objetivo: Testar revisões de Pull Requests
 # para arquivos de infraestrutura como código (IaC).
+# teste de commit para testar o CODEOWNERS e a revisão de código.
 
 terraform {
   required_version = ">= 1.0"
