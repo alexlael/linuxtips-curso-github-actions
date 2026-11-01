@@ -5,6 +5,7 @@
  * Objetivo: Aprender como funciona a revisão
  * de código e a aprovação de Pull Requests
  * utilizando o recurso CODEOWNERS do GitHub.
+ * Fazendo um commit para testar o CODEOWNERS e a revisão de código.
  */
 
 const estudo = {
