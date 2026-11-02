@@ -1,0 +1,30 @@
+name: 3 - Publicacao
+
+on:
+  workflow_run:
+    workflows: ["1 - Validacao de Ambiente"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  deploy:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Faz checkout do commit que foi testado
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Deploy ficticio no servidor
+        run: |
+          echo "Conectando ao servidor de producao..."
+          echo "Copiando app/app.js para /var/www/app"
+          echo "Reiniciando o servico"
+          echo "Workflow de origem: ${{ github.event.workflow_run.name }}"
+          echo "Execucao de origem: ${{ github.event.workflow_run.html_url }}"
+          echo "Branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "Commit: ${{ github.event.workflow_run.head_sha }}"
+          echo "Deploy concluido"

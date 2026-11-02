@@ -1,0 +1,35 @@
+name: 2 - Build e Testes
+
+on:
+  workflow_call:
+    inputs:
+      ambiente:
+        required: true
+        type: string
+      versao-node:
+        required: true
+        type: string
+
+jobs:
+  build-e-testes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Faz checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configura o Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.versao-node }}
+
+      - name: Build - valida a sintaxe da aplicacao
+        run: node --check app/app.js
+
+      - name: Testes - executa a aplicacao e valida a saida
+        run: |
+          SAIDA=$(node app/app.js)
+          echo "$SAIDA"
+          echo "$SAIDA" | grep -q "Olá, mundo!"
+
+      - name: Resumo
+        run: echo "Build e testes OK para o ambiente ${{ inputs.ambiente }} com Node.js ${{ inputs.versao-node }}"
