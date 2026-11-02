@@ -1,0 +1,85 @@
+name: 1 - Validacao de Ambiente
+
+on:
+  workflow_dispatch:
+    inputs:
+      ambiente:
+        description: "Ambiente de destino"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - hml
+          - prod
+      versao-node:
+        description: "Versao do Node.js"
+        required: true
+        default: "20"
+        type: choice
+        options:
+          - "18"
+          - "20"
+          - "22"
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validar-ambiente:
+    runs-on: ubuntu-latest
+    outputs:
+      ambiente: ${{ steps.definir.outputs.ambiente }}
+      versao-node: ${{ steps.definir.outputs.versao-node }}
+    steps:
+      - name: Faz checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Define ambiente e versao do Node.js
+        id: definir
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            AMBIENTE="${{ inputs.ambiente }}"
+            VERSAO_NODE="${{ inputs.versao-node }}"
+          elif [ "${{ github.ref_name }}" = "main" ]; then
+            AMBIENTE="prod"
+            VERSAO_NODE="20"
+          else
+            AMBIENTE="dev"
+            VERSAO_NODE="20"
+          fi
+          echo "ambiente=$AMBIENTE" >> "$GITHUB_OUTPUT"
+          echo "versao-node=$VERSAO_NODE" >> "$GITHUB_OUTPUT"
+
+      - name: Exibe os parametros
+        run: |
+          echo "Evento: ${{ github.event_name }}"
+          echo "Disparado por: ${{ github.actor }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Ambiente: ${{ steps.definir.outputs.ambiente }}"
+          echo "Versao do Node.js: ${{ steps.definir.outputs.versao-node }}"
+
+      - name: Valida se a aplicacao existe no repositorio
+        run: |
+          if [ ! -f app/app.js ]; then
+            echo "::error::Arquivo app/app.js nao encontrado"
+            exit 1
+          fi
+          echo "Aplicacao encontrada"
+
+      - name: Bloqueia prod fora da branch main
+        if: steps.definir.outputs.ambiente == 'prod' && github.ref_name != 'main'
+        run: |
+          echo "::error::Ambiente prod so e permitido a partir da main"
+          exit 1
+
+  build-e-testes:
+    needs: validar-ambiente
+    uses: ./.github/workflows/2-build-e-testes.yml
+    with:
+      ambiente: ${{ needs.validar-ambiente.outputs.ambiente }}
+      versao-node: ${{ needs.validar-ambiente.outputs.versao-node }}
